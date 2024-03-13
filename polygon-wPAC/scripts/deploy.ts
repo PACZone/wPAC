@@ -1,0 +1,24 @@
+import { ethers, run, upgrades } from "hardhat"
+
+async function main() {
+	const [deployer] = await ethers.getSigners()
+	console.log("Deploying contracts with the account:", deployer.address)
+
+	const Factory = await ethers.getContractFactory("WrappedPAC")
+	const wpac = await upgrades.deployProxy(Factory,undefined, { initializer: "initialize" })
+	await wpac.waitForDeployment()
+
+	const addresses = {
+		proxy: await wpac.getAddress(),
+		admin: await upgrades.erc1967.getAdminAddress(await wpac.getAddress()),
+		implementation: await upgrades.erc1967.getImplementationAddress(await wpac.getAddress()),
+	}
+	console.log(addresses)
+}
+
+// We recommend this pattern to be able to use async/await everywhere
+// and properly handle errors.
+main().catch(error => {
+	console.error(error)
+	process.exitCode = 1
+})
