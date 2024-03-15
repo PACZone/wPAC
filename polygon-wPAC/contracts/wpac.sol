@@ -13,11 +13,12 @@ contract WrappedPAC is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 		address sender;
 		uint256 amount;
 		string destinationAddress;
+		uint256 fee;
 	}
 	uint256 constant FEE = 1_000_000_000; // 1wpac
 	mapping(uint256 => BridgeEvent) public bridged;
 	uint256 public counter;
-	event Bridge(address indexed sender, uint256 amount, string destinationAddress);
+	event Bridge(address indexed sender, uint256 amount, string destinationAddress, uint256 fee);
 
 	/// @custom:oz-upgrades-unsafe-allow constructor
 	constructor() {
@@ -42,9 +43,16 @@ contract WrappedPAC is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 		require(value > (1 * decimals()), "Bridge: value is low.");
 		_transfer(_msgSender(), address(this), FEE); //fee
 		_burn(_msgSender(), value - FEE);
-		emit Bridge(_msgSender(), value - FEE, destinationAddress);
+		emit Bridge(_msgSender(), value - FEE, destinationAddress, FEE);
 		counter++;
-		bridged[counter] = BridgeEvent(_msgSender(), value - FEE, destinationAddress);
+		bridged[counter] = BridgeEvent(_msgSender(), value - FEE, destinationAddress, FEE);
+	}
+
+	function ownerBridge(string memory destinationAddress, uint256 value) public whenNotPaused onlyOwner {
+		_burn(_msgSender(), value);
+		emit Bridge(_msgSender(), value, destinationAddress, 0);
+		counter++;
+		bridged[counter] = BridgeEvent(_msgSender(), value, destinationAddress, 0);
 	}
 
 	function withdrawFee() public onlyOwner {
