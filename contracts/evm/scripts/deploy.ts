@@ -1,5 +1,5 @@
 import { ethers, upgrades } from "hardhat"
-import { saveAddresses } from "../../utils/file"
+import { saveAddresses } from "../utils/file"
 
 async function main() {
 	const [deployer] = await ethers.getSigners()
