@@ -15,7 +15,7 @@ contract WrappedPAC is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 		string destinationAddress;
 		uint256 fee;
 	}
-	uint256 constant FEE = 1_000_000_000; // 1wpac
+	uint256 public constant FEE = 1_000_000_000; // 1wpac
 	mapping(uint256 => BridgeEvent) public bridged;
 	uint256 public counter;
 	event Bridge(address indexed sender, uint256 amount, string destinationAddress, uint256 fee);
@@ -31,7 +31,7 @@ contract WrappedPAC is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 		__UUPSUpgradeable_init();
 	}
 
-	function decimals() public view override returns (uint8) {
+	function decimals() public pure override returns (uint8) {
 		return 9;
 	}
 
@@ -40,15 +40,15 @@ contract WrappedPAC is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 	}
 
 	function bridge(string memory destinationAddress, uint256 value) public whenNotPaused {
-		require(value > (1 * decimals()), "Bridge: value is low.");
+		require(value > (1 * 1e9), "Bridge: value is low.");
 		_transfer(_msgSender(), address(this), FEE); //fee
-		_burn(_msgSender(), value - FEE);
-		emit Bridge(_msgSender(), value - FEE, destinationAddress, FEE);
+		_burn(_msgSender(), value);
+		emit Bridge(_msgSender(), value, destinationAddress, FEE);
 		counter++;
 		bridged[counter] = BridgeEvent(_msgSender(), value - FEE, destinationAddress, FEE);
 	}
 
-	function ownerBridge(string memory destinationAddress, uint256 value) public whenNotPaused onlyOwner {
+	function adminBridge(string memory destinationAddress, uint256 value) public whenNotPaused onlyOwner {
 		_burn(_msgSender(), value);
 		emit Bridge(_msgSender(), value, destinationAddress, 0);
 		counter++;

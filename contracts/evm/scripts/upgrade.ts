@@ -1,5 +1,5 @@
 import { ethers, upgrades } from "hardhat"
-import { loadAddresses, saveAddresses } from "../../utils/file"
+import { loadAddresses, saveAddresses } from "../utils/file"
 
 const UPGRADEABLE_PROXY = loadAddresses().proxy
 //0x22553d0734E9B80E2f59E67eB2feE05C16143279
