@@ -1,5 +1,27 @@
 {
-  "dependencies": {
-    "@openzeppelin/hardhat-upgrades": "^3.0.5"
-  }
+	"name": "telewrapped",
+	"description": "This monorepo contains wrapped tokens of teleport protocol contracts.",
+	"version": "1.0.0",
+	"main": "index.js",
+	"workspaces": [
+		"contracts/evm/*",
+		"packages/eslint-config"
+	],
+	"scripts": {
+		"prepare": "husky install"
+	},
+	"devDependencies": {
+		"husky": "^8.0.3",
+		"@nomicfoundation/hardhat-toolbox": "^4.0.0",
+		"hardhat": "^2.21.0"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"dependencies": {
+		"@openzeppelin/hardhat-upgrades": "^3.0.5",
+		"@openzeppelin/contracts": "^5.0.2",
+		"@openzeppelin/contracts-upgradeable": "^4.7.3",
+		"dotenv": "^16.4.5"
+	}
 }
