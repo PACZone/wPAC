@@ -8,7 +8,7 @@
 		"packages/eslint-config"
 	],
 	"scripts": {
-		"node":"npx hardhat node",
+		"node": "npx hardhat node",
 		"compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile",
 		"clean": "shx rm -rf ./artifacts ./cache ./coverage ./src/types ./coverage.json && yarn typechain",
 		"lint:sol": "solhint --config ./.solhint.json --max-warnings 0 \"contracts/**/*.sol\"",
@@ -17,17 +17,17 @@
 		"typechain": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat typechain"
 	},
 	"devDependencies": {
-		"husky": "^8.0.3",
 		"@nomicfoundation/hardhat-toolbox": "^4.0.0",
-		"hardhat": "^2.21.0"
+		"hardhat": "^2.21.0",
+		"husky": "^8.0.3"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "MIT",
 	"dependencies": {
-		"@openzeppelin/hardhat-upgrades": "^3.0.5",
 		"@openzeppelin/contracts": "^5.0.2",
 		"@openzeppelin/contracts-upgradeable": "^4.7.3",
+		"@openzeppelin/hardhat-upgrades": "^3.0.5",
 		"dotenv": "^16.4.5"
 	}
 }

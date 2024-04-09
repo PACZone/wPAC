@@ -1,5 +1,6 @@
 import { shouldBehaveLikeAdminBridge } from "./adminBridge"
 import { shouldBehaveLikeBridge } from "./bridge"
+import { shouldBehaveLikeFee } from "./fee"
 import { shouldBehaveLikeInitialize } from "./init"
 import { shouldBehaveLikeMint } from "./mint"
 import { shouldBehaveLikeWithdrawFee } from "./withdrawFee"
@@ -22,5 +23,9 @@ describe("Wrapped PAC", function () {
 
 	describe("WithdrawFee", async function () {
 		shouldBehaveLikeWithdrawFee()
+	})
+
+	describe("Fee", async function () {
+		shouldBehaveLikeFee()
 	})
 })
