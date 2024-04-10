@@ -4,7 +4,7 @@ Welcome to the repository for Wrapped PAC (WPAC) token. WPAC is a wrapped token 
 
 ## Project Overview
 
-WPAC tokens are wrapped tokens of the Teleport Protocol contracts. The token contract is implemented in Solidity and follows the OpenZeppelin Contracts upgradeable pattern. It allows users to bridge PAC tokens from one blockchain to another by locking the tokens in the contract and minting WPAC tokens on the destination chain.
+WPAC tokens are wrapped tokens of the Wrapto contracts. The token contract is implemented in Solidity and follows the OpenZeppelin Contracts upgradeable pattern. It allows users to bridge PAC tokens from one blockchain to another by locking the tokens in the contract and minting WPAC tokens on the destination chain.
 
 ## Getting Started
 
@@ -42,7 +42,7 @@ In the project directory, you can run the following scripts:
 
 ## Contract Overview
 
-The main contract file is `WrappedPAC.sol` which implements the ERC20 interface. It also integrates functionalities for bridging PAC tokens from one blockchain to another. The contract is upgradeable and follows the Ownable and Pausable patterns for security and control.
+The main contract file is `wpac.sol` which implements the ERC20 interface. It also integrates functionalities for bridging PAC tokens from one blockchain to another. The contract is upgradeable and follows the Ownable and Pausable patterns for security and control.
 
 ## Project Structure
 
@@ -57,7 +57,7 @@ The main project files and directories are structured as follows:
 
 ## License
 
-This project is licensed under the [MIT License](LICENSE).
+Wrapto is released under [MIT License](LICENSE).
 
 ---
 
