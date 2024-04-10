@@ -2,6 +2,7 @@ import { ethers, upgrades } from "hardhat"
 import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers"
 import { expect } from "chai"
 import { decimal } from "../utils/decimal"
+import { getFee } from "./utils/fee"
 
 export const shouldBehaveLikeBridge = async () => {
 	let wpac: any
@@ -42,10 +43,10 @@ export const shouldBehaveLikeBridge = async () => {
 		expect(await wpac.balanceOf(bob.address)).to.be.equal(decimal(92))
 		expect(b.destinationAddress).to.be.equal(pacAddr)
 		expect(b.sender).to.be.equal(bob.address)
-		expect(b.amount).to.be.equal(decimal(6))
-		expect(b.fee).to.be.equal(decimal(1))
+		expect(b.amount).to.be.equal(decimal(7))
+		expect(b.fee).to.be.equal(getFee(7))
 
-		expect(await wpac.balanceOf(wpac.target)).to.be.equal(decimal(1)) //Fee
+		expect(await wpac.balanceOf(wpac.target)).to.be.equal(getFee(7)) //Fee
 		expect(await wpac.totalSupply()).to.be.equal(decimal(93)) //burn
 		expect(await wpac.counter()).to.be.equal(1) //counter
 	})
