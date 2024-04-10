@@ -17,7 +17,8 @@ export const shouldBehaveLikeInitialize = async () => {
 
 	it("should init correct", async () => {
 		expect(await wpac.owner()).to.be.equal(owner.address)
-		expect(await wpac.FEE()).to.be.equal(decimal(1))
+		expect(await wpac.MIN_FEE()).to.be.equal(decimal(1))
+		expect(await wpac.MAX_FEE()).to.be.equal(decimal(5))
 		expect(await wpac.counter()).to.be.equal(0)
 		expect(await wpac.decimals()).to.be.equal(9)
         expect(await wpac.paused()).to.be.equal(false)
