@@ -44,6 +44,7 @@ In the project directory, you can run the following scripts:
 
 The main contract file is `wpac.sol` which implements the ERC20 interface. It also integrates functionalities for bridging PAC tokens from one blockchain to another. The contract is upgradeable and follows the Ownable and Pausable patterns for security and control.
 
+
 ## Project Structure
 
 The main project files and directories are structured as follows:
