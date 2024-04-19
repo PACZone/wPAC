@@ -26,7 +26,7 @@ if (!process.env.CI) {
 			hardhat: {
 				allowUnlimitedContractSize: false,
 			},
-			mumbai: {
+			amoy: {
 				url: RPC,
 				accounts: [account],
 			},
