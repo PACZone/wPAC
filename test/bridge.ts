@@ -3,10 +3,11 @@ import { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/signers"
 import { expect } from "chai"
 import { decimal } from "../utils/decimal"
 import { getFee } from "./utils/fee"
+import { WrappedPAC } from "../src/types"
 
 export const shouldBehaveLikeBridge = async () => {
-	let wpac: any
-	let owner: SignerWithAddress, alice: SignerWithAddress, bob: SignerWithAddress
+	let wpac: WrappedPAC
+	let owner: SignerWithAddress, alice: SignerWithAddress, bob: SignerWithAddress, minter: SignerWithAddress
 	const pacAddr = "tpc1zlymfcuxlgvvuud2q4zw0scllqn74d2f90hld6w"
 
 	before(async () => {
@@ -15,14 +16,18 @@ export const shouldBehaveLikeBridge = async () => {
 		owner = signers[0]
 		alice = signers[1]
 		bob = signers[2]
+		minter = signers[3]
 	})
 
 	beforeEach(async () => {
 		const Factory = await ethers.getContractFactory("WrappedPAC")
 		const WPAC = await upgrades.deployProxy(Factory, undefined, { initializer: "initialize" })
 		wpac = await WPAC.waitForDeployment()
+		
+		await wpac.setMinterRole(minter)
 
-		await wpac.connect(owner).mint(bob.address, decimal(100))
+		await wpac.connect(minter).mint(bob.address, decimal(100))
+
 	})
 
 	it("should fails if the value is below the minimum threshold", async () => {

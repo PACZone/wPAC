@@ -30,11 +30,27 @@ if (!process.env.CI) {
 				url: RPC,
 				accounts: [account],
 			},
+
+			polygon: {
+				url: RPC,
+				accounts: [account],
+			},
 		},
 		etherscan: {
 			apiKey: {
-				mumbai: etherscanApiKey,
+				amoy: etherscanApiKey,
+				polygon:etherscanApiKey
 			},
+			customChains: [
+				{
+				  network: "polygon",
+				  chainId: 137,
+				  urls: {
+					apiURL: "https://api.polygonscan.com/api",
+					browserURL: "https://polygonscan.com"
+				  }
+				}
+			  ]
 		},
 		gasReporter: {
 			currency: "USD",
