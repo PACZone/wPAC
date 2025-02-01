@@ -24,14 +24,14 @@ export const shouldBehaveLikeBridge = async () => {
 		const WPAC = await upgrades.deployProxy(Factory, undefined, { initializer: "initialize" })
 		wpac = await WPAC.waitForDeployment()
 		
-		await wpac.setMinterRole(minter)
+		await wpac.setMinter(minter)
 
 		await wpac.connect(minter).mint(bob.address, decimal(100))
 
 	})
 
 	it("should fails if the value is below the minimum threshold", async () => {
-		await expect(wpac.connect(bob).bridge(pacAddr, decimal(1))).to.be.revertedWith("Bridge: value is low.")
+		await expect(wpac.connect(bob).bridge(pacAddr, decimal(1))).to.be.revertedWith("WrappedPAC: value is low.")
 	})
 
 	it("should fails if amount exceeds balance", async () => {

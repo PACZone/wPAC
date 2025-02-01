@@ -21,14 +21,14 @@ export const shouldBehaveLikeWithdrawFee = async () => {
 		const WPAC = await upgrades.deployProxy(Factory, undefined, { initializer: "initialize" })
 		wpac = await WPAC.waitForDeployment()
 
-		await wpac.setMinterRole(minter)
-		await wpac.setFeeCollectorRole(feeCollector)
+		await wpac.setMinter(minter)
+		await wpac.setFeeCollector(feeCollector)
 
 		await wpac.connect(minter).mint(bob.address, decimal(100))
 	})
 
 	it("should only the fee collector withdraw fee", async () => {
-		await expect(wpac.connect(alice).withdrawFee()).to.be.revertedWith(/\bAccessControl\b/)
+		await expect(wpac.connect(alice).withdrawFee()).to.be.revertedWith("WrappedPAC: caller is not the fee collector")
 	})
 
 	it("should withdraw fee balance to fee collector", async () => {

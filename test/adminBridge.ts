@@ -24,19 +24,18 @@ export const shouldBehaveLikeAdminBridge = async () => {
 		const WPAC = await upgrades.deployProxy(Factory, undefined, { initializer: "initialize" })
 		wpac = await WPAC.waitForDeployment()
 
-		await wpac.setMinterRole(minter)
-		await wpac.setFeeCollectorRole(feeCollector)
+		await wpac.setMinter(minter)
+		await wpac.setFeeCollector(feeCollector)
 
 		await wpac.connect(minter).mint(bob.address, decimal(100))
 	})
 
 	it("should grant Fee collector correct", async () => {
-		expect(await wpac.hasRole(await wpac.FEE_COLLECTOR_ROLE(), feeCollector)).to.be.equal(true)
-		expect(await wpac.hasRole(await wpac.FEE_COLLECTOR_ROLE(), owner)).to.be.equal(false)
+		expect(await wpac.FEE_COLLECTOR()).to.be.equal(feeCollector)
 	})
 
 	it("should fails if caller is not fee collector", async () => {
-		await expect(wpac.connect(alice).adminBridge(pacAddr, decimal(1))).to.be.revertedWith(/\bAccessControl\b/)
+		await expect(wpac.connect(alice).adminBridge(pacAddr, decimal(1))).to.be.revertedWith("WrappedPAC: caller is not the fee collector")
 	})
 
 	it("should fails if amount exceeds balance", async () => {

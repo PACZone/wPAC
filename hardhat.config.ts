@@ -48,8 +48,16 @@ if (!process.env.CI) {
 				  urls: {
 					apiURL: "https://api.polygonscan.com/api",
 					browserURL: "https://polygonscan.com"
+				  },
+				},
+				{
+					network: "amoy",
+					chainId: 80002,
+					urls: {
+					  apiURL: "https://api-amoy.polygonscan.com/api",
+					  browserURL: "https://amoy.polygonscan.com"
+					}
 				  }
-				}
 			  ]
 		},
 		gasReporter: {

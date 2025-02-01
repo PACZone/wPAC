@@ -20,16 +20,15 @@ export const shouldBehaveLikeMint = async () => {
 		const WPAC = await upgrades.deployProxy(Factory, undefined, { initializer: "initialize" })
 		wpac = await WPAC.waitForDeployment()
 
-		await wpac.setMinterRole(minter)
+		await wpac.setMinter(minter)
 	})
 
 	it("should grant Minter role correct", async () => {
-		expect(await wpac.hasRole(await wpac.MINTER_ROLE(), minter)).to.be.equal(true)
-		expect(await wpac.hasRole(await wpac.MINTER_ROLE(), owner)).to.be.equal(false)
+		expect(await wpac.MINTER()).to.be.equal(minter)
 	})
 
 	it("only the Minter role can mint tokens", async () => {
-		await expect(wpac.connect(alice).mint(bob.address, decimal(10))).to.be.revertedWith(/\bAccessControl\b/)
+		await expect(wpac.connect(alice).mint(bob.address, decimal(10))).to.be.revertedWith("WrappedPAC: caller is not the minter")
 	})
 
 	it("correct amount of tokens is minted to the specified address", async () => {

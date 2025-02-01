@@ -8,8 +8,6 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
 import "@openzeppelin/contracts/utils/math/Math.sol";
-import { AccessControlEnumerableUpgradeable } from "@openzeppelin/contracts-upgradeable/access/AccessControlEnumerableUpgradeable.sol";
-
 /**
  * @title WrappedPAC (WPAC)
  *
@@ -18,7 +16,7 @@ import { AccessControlEnumerableUpgradeable } from "@openzeppelin/contracts-upgr
  * @custom:version 0.0.2
  * @custom:license MIT
  */
-contract WrappedPAC is Initializable, OwnableUpgradeable, PausableUpgradeable, ERC20Upgradeable, UUPSUpgradeable, AccessControlEnumerableUpgradeable {
+contract WrappedPAC is Initializable, OwnableUpgradeable, PausableUpgradeable, ERC20Upgradeable, UUPSUpgradeable {
 	// Struct to store details of a bridge event
 	struct BridgeEvent {
 		address sender; // Address of the sender
@@ -37,13 +35,24 @@ contract WrappedPAC is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 	// Counter for tracking bridge events
 	uint256 public counter;
 
-	// Role definitions
-	bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
-	bytes32 public constant FEE_COLLECTOR_ROLE = keccak256("FEE_COLLECTOR_ROLE");
+	address public MINTER;
+	address public FEE_COLLECTOR;
 
 	// Events
 	event Bridge(address indexed sender, uint256 amount, string destinationAddress, uint256 fee);
-	event SetRole(address indexed grantTo, bytes32 role);
+	event SetMinter(address indexed minter);
+	event SetFeeCollector(address indexed feeCollector);
+
+	modifier OnlyMinter(address caller) {
+		require(caller == MINTER, "WrappedPAC: caller is not the minter");
+		_;
+	}
+
+	modifier OnlyFeeCollector(address caller) {
+		require(caller == FEE_COLLECTOR, "WrappedPAC: caller is not the fee collector");
+		_;
+	}
+
 	/// @custom:oz-upgrades-unsafe-allow constructor
 	constructor() {
 		_disableInitializers();
@@ -73,7 +82,7 @@ contract WrappedPAC is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 	 * @param to The address to receive the minted tokens.
 	 * @param amount The amount of tokens to mint.
 	 */
-	function mint(address to, uint256 amount) public onlyRole(MINTER_ROLE) {
+	function mint(address to, uint256 amount) public OnlyMinter(_msgSender()) {
 		_mint(to, amount);
 	}
 
@@ -103,7 +112,7 @@ contract WrappedPAC is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 	 * @param value The amount of tokens to bridge.
 	 */
 	function bridge(string memory destinationAddress, uint256 value) public whenNotPaused {
-		require(value > (1 * 1e9), "Bridge: value is low.");
+		require(value > (1 * 1e9), "WrappedPAC: value is low.");
 
 		uint256 fee = getFee(value);
 		_transfer(_msgSender(), address(this), fee); // Transfer fee to the contract
@@ -121,7 +130,7 @@ contract WrappedPAC is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 	 * @param destinationAddress The address on the destination chain.
 	 * @param value The amount of tokens to bridge.
 	 */
-	function adminBridge(string memory destinationAddress, uint256 value) public whenNotPaused onlyRole(FEE_COLLECTOR_ROLE) {
+	function adminBridge(string memory destinationAddress, uint256 value) public whenNotPaused OnlyFeeCollector(_msgSender()) {
 		_burn(_msgSender(), value);
 		emit Bridge(_msgSender(), value, destinationAddress, 0);
 		counter++;
@@ -132,7 +141,7 @@ contract WrappedPAC is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 	 * @notice Withdraws all accumulated fees from the contract.
 	 * @dev Only callable by accounts with the FEE_COLLECTOR_ROLE.
 	 */
-	function withdrawFee() public onlyRole(FEE_COLLECTOR_ROLE) {
+	function withdrawFee() public OnlyFeeCollector(_msgSender()) {
 		_transfer(address(this), _msgSender(), balanceOf(address(this)));
 	}
 
@@ -141,9 +150,9 @@ contract WrappedPAC is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 	 * @dev Only callable by the contract owner. Grants the FEE_COLLECTOR_ROLE to the specified address.
 	 * @param _feeCollectorAddress The address to grant the FEE_COLLECTOR_ROLE.
 	 */
-	function setFeeCollectorRole(address _feeCollectorAddress) public onlyOwner {
-		_grantRole(FEE_COLLECTOR_ROLE, _feeCollectorAddress);
-		emit SetRole(_feeCollectorAddress, FEE_COLLECTOR_ROLE);
+	function setFeeCollector(address _feeCollectorAddress) public onlyOwner {
+		FEE_COLLECTOR = _feeCollectorAddress;
+		emit SetFeeCollector(_feeCollectorAddress);
 	}
 
 	/**
@@ -151,9 +160,9 @@ contract WrappedPAC is Initializable, OwnableUpgradeable, PausableUpgradeable, E
 	 * @dev Only callable by the contract owner. Grants the MINTER_ROLE to the specified address.
 	 * @param _minterAddress The address to grant the MINTER_ROLE.
 	 */
-	function setMinterRole(address _minterAddress) public onlyOwner {
-		_grantRole(MINTER_ROLE, _minterAddress);
-		emit SetRole(_minterAddress, MINTER_ROLE);
+	function setMinter(address _minterAddress) public onlyOwner {
+		MINTER = _minterAddress;
+		emit SetMinter(_minterAddress);
 	}
 
 	/**
